@@ -2,6 +2,21 @@
 
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
+## Usage
+
+```js
+
+var normalize = require('deps-normalize');
+
+normalize('block__elem_mod');
+```
+
+## API
+
+### normalize(dependencies)
+
+Runs normalization of dependencies. Returns array of normalized dependencies.
+
 ## License
 
 MIT (c) 2014 Vsevolod Strukchinsky
