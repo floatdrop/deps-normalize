@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/floatdrop/deps-normalize/issues"
   },
-  "homepage": "https://github.com/floatdrop/deps-normalize"
+  "homepage": "https://github.com/floatdrop/deps-normalize",
+  "dependencies": {
+    "parse-bem-identifier": "^3.0.0"
+  }
 }
