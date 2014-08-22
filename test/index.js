@@ -57,6 +57,13 @@ describe('BEMobject.expand', function () {
         ]);
     });
 
+    it('should properly handle multiple elements with block', function () {
+        nomralize({ block: 'b', elems: ['row', 'cell'] }).should.eql([
+            { block: 'b', elem: 'row' },
+            { block: 'b', elem: 'cell' }
+        ]);
+    });
+
     it('should properly handle single mod with value', function () {
         nomralize({ mod: 'color', value: 'white' }).should.eql([{
             mod: 'color', value: 'white'
