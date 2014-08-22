@@ -25,11 +25,7 @@ describe('deps normalizer', function() {
             { block : 'b', mod : 'm', val : 'v' },
             { block : 'b', elem : 'e' },
             { block : 'b', elem : 'e', mod : 'm' },
-            { block : 'b', elem : 'e', mod : 'm', val : 'v' },
-            { block : 'b', tech : 't' },
-            { block : 'b', elem : 'e', tech : 't' },
-            { block : 'b', elem : 'e', mod : 'm', tech : 't' },
-            { block : 'b', elem : 'e', mod : 'm', val : 'v', tech : 't' }
+            { block : 'b', elem : 'e', mod : 'm', val : 'v' }
         ];
 
         it('should pass full declaration', function() {
