@@ -1,3 +1,5 @@
+var parse = require('parse-bem-identifier');
+
 var toString = Object.prototype.toString,
     isArray = Array.isArray,
     isObject = function(o) {
@@ -10,6 +12,8 @@ module.exports = function normalizeDeps(deps) {
 };
 
 function normalize(deps) {
+    if (typeof deps === 'string') { deps = parse(deps, {short: true});}
+
     if(!isObject(deps)) {
         throw new Error('invalid declaration ' + deps);
     }
