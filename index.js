@@ -52,7 +52,7 @@ function extendProps(src, target) {
     extend('block', src, target);
     extend('elem', src, target);
     extend('mod', src, target);
-    extend('val', src, target);
+    extend('value', src, target);
     return target;
 }
 function extend(property, src, target) {
