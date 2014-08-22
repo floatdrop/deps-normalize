@@ -77,6 +77,13 @@ describe('BEMobject.expand', function () {
         ]);
     });
 
+    it('should properly handle multiple mods with single values', function () {
+        nomralize({ block: 'b', elem: 'e', mods: { color: 'white', position: 'top' }}).should.eql([
+            { block: 'b', elem: 'e', mod: 'color', value: 'white' },
+            { block: 'b', elem: 'e',mod: 'position', value: 'top' }
+        ]);
+    });
+
     it('should properly handle multiple mods with multiple values', function () {
         nomralize({ mods: { color: 'white', position: ['top', 'bottom'] }}).should.eql([
             { mod: 'color', value: 'white' },

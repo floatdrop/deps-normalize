@@ -21,7 +21,9 @@ module.exports = function (deps) {
 
     if (deps.elems) {
         deps.elems.forEach(function(elem) {
-            res.push({ elem: elem });
+            res.push({
+                elem: elem
+            });
         });
     }
 
@@ -31,7 +33,10 @@ module.exports = function (deps) {
                 deps.mods[mod] = [deps.mods[mod]];
             }
             deps.mods[mod].forEach(function(value) {
-                res.push({ mod: mod, value: value });
+                res.push({
+                    mod: mod,
+                    value: value
+                });
             });
         });
     }
@@ -40,5 +45,18 @@ module.exports = function (deps) {
         res.push(deps);
     }
 
-    return res;
+    return res.map(extendProps.bind(null, deps));
 };
+
+function extendProps(src, target) {
+    extend('block', src, target);
+    extend('elem', src, target);
+    extend('mod', src, target);
+    extend('val', src, target);
+    return target;
+}
+function extend(property, src, target) {
+    if(target[property]) { return target; }
+    if(src[property]) { target[property] = src[property]; }
+    return target;
+}
