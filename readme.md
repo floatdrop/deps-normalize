@@ -39,9 +39,9 @@ If deps object contain `elems` or `mods` it will be splitted in multiple BEM obj
     require: [
         { block: 'b', elem: 'e1' },
         { block: 'b', elem: 'e2' },
-        { block: 'b', mod: 'm1', value: 1 },
-        { block: 'b', mod: 'm2', value: 2 },
-        { block: 'b', mod: 'm2', value: 3 }
+        { block: 'b', mod: 'm1', val: 1 },
+        { block: 'b', mod: 'm2', val: 2 },
+        { block: 'b', mod: 'm2', val: 3 }
     ]
 })
 ```
