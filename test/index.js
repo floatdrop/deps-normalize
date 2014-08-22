@@ -1,100 +1,181 @@
 /* global describe, it */
 
-var nomralize = require('../');
 require('should');
+var normalizeDeps = require('../');
 
-describe('BEMobject.expand', function () {
-    it('should throw expection on empty object', function () {
-        (function () {
-            nomralize({});
-        }).should.throw();
+describe('deps normalizer', function() {
+    describe('simple', function() {
+        it('should return array', function() {
+            var deps = normalizeDeps({ block : 'b1' });
+            deps.should.be.instanceOf(Array);
+            deps.should.be.ok;
+        });
+
+        it('should consume array of declarations', function() {
+            var deps = normalizeDeps([{ block : 'b1' }, { block : 'b2' }]);
+            deps.should.be.instanceOf(Array);
+            deps.should.have.length(2);
+        });
     });
 
-    it('should properly handle string', function () {
-        nomralize('block').should.eql([{
-            block: 'block'
-        }]);
+    describe('full declaration', function() {
+        var inDeps = [
+            { block : 'b' },
+            { block : 'b', mod : 'm' },
+            { block : 'b', mod : 'm', val : 'v' },
+            { block : 'b', elem : 'e' },
+            { block : 'b', elem : 'e', mod : 'm' },
+            { block : 'b', elem : 'e', mod : 'm', val : 'v' },
+            { block : 'b', tech : 't' },
+            { block : 'b', elem : 'e', tech : 't' },
+            { block : 'b', elem : 'e', mod : 'm', tech : 't' },
+            { block : 'b', elem : 'e', mod : 'm', val : 'v', tech : 't' }
+        ];
 
-        nomralize('block__elem').should.eql([{
-            block: 'block',
-            elem: 'elem'
-        }]);
-
-        nomralize('block__elem_mod').should.eql([{
-            block: 'block',
-            elem: 'elem',
-            mod: 'mod'
-        }]);
-
-        nomralize('block__elem_mod_val').should.eql([{
-            block: 'block',
-            elem: 'elem',
-            mod: 'mod',
-            value: 'val'
-        }]);
-
-        nomralize('block_mod').should.eql([{
-            block: 'block',
-            mod: 'mod',
-        }]);
-        nomralize('block_mod_val').should.eql([{
-            block: 'block',
-            mod: 'mod',
-            value: 'val'
-        }]);
+        it('should pass full declaration', function() {
+            inDeps.forEach(function(idep) {
+                normalizeDeps(idep).should.be.eql([idep]);
+            });
+        });
     });
 
-    it('should properly handle single elem', function () {
-        nomralize({ elem: 'singleElem' }).should.eql([{
-            elem: 'singleElem'
-        }]);
+    describe('single forms', function() {
+        describe.skip('block', function() {
+            it('should accept declare "block" with array', function() {
+                normalizeDeps({ block : ['b1', 'b2'] })
+                    .should.eql([
+                        { block : 'b1' },
+                        { block : 'b2' }
+                    ]);
+
+                normalizeDeps({ block : ['b1', 'b2'], elem : 'e' })
+                    .should.eql([
+                        { block : 'b1', elem : 'e' },
+                        { block : 'b2', elem : 'e' }
+                    ]);
+            });
+        });
+
+        describe('elem', function() {
+            it('should accept declare "elem" with array (bem/bem-tools#401)', function() {
+                normalizeDeps({ block : 'b', elem : ['e1', 'e2'] })
+                    .should.eql([
+                        { block : 'b', elem : 'e1' },
+                        { block : 'b', elem : 'e2' }
+                    ]);
+            });
+        });
     });
 
-    it('should properly handle multiple elements', function () {
-        nomralize({ elems: ['row', 'cell'] }).should.eql([
-            { elem: 'row' },
-            { elem: 'cell' }
-        ]);
-    });
+    describe('plural forms', function() {
+        describe('blocks', function() {
+            it('should understand "blocks" declaration', function() {
+                normalizeDeps({ blocks : 'b1' })
+                    .should.eql([{ block : 'b1' }]);
 
-    it('should properly handle multiple elements with block', function () {
-        nomralize({ block: 'b', elems: ['row', 'cell'] }).should.eql([
-            { block: 'b', elem: 'row' },
-            { block: 'b', elem: 'cell' }
-        ]);
-    });
+                normalizeDeps({ blocks : ['b1'] })
+                    .should.eql([{ block : 'b1' }]);
 
-    it('should properly handle single mod with value', function () {
-        nomralize({ mod: 'color', value: 'white' }).should.eql([{
-            mod: 'color', value: 'white'
-        }]);
-    });
+                normalizeDeps({ blocks : ['b1'], elem : 'e' })
+                    .should.eql([{ block : 'b1' }, { block : 'b1', elem : 'e' }]);
 
-    it('should properly handle multiple mods with single values', function () {
-        nomralize({ mods: { color: 'white', position: 'top' }}).should.eql([
-            { mod: 'color', value: 'white' },
-            { mod: 'position', value: 'top' }
-        ]);
-    });
+                normalizeDeps({ blocks : ['b1', 'b2'] })
+                    .should.eql([{ block : 'b1' }, { block : 'b2'}]);
 
-    it('should properly handle multiple mods with single values', function () {
-        nomralize({ block: 'b', elem: 'e', mods: { color: 'white', position: 'top' }}).should.eql([
-            { block: 'b', elem: 'e', mod: 'color', value: 'white' },
-            { block: 'b', elem: 'e',mod: 'position', value: 'top' }
-        ]);
-    });
+                normalizeDeps({ blocks : ['b1', 'b2'], elem : 'e' })
+                    .should.eql([
+                        { block : 'b1' },
+                        { block : 'b1', elem : 'e' },
+                        { block : 'b2' },
+                        { block : 'b2', elem : 'e' }
+                    ]);
+            });
+        });
 
-    it('should properly handle multiple mods with multiple values', function () {
-        nomralize({ mods: { color: 'white', position: ['top', 'bottom'] }}).should.eql([
-            { mod: 'color', value: 'white' },
-            { mod: 'position', value: 'top' },
-            { mod: 'position', value: 'bottom' }
-        ]);
-    });
+        describe('elems', function() {
+            it('should understand "elems" declaration', function() {
+                normalizeDeps({ block : 'b', elems : 'e1' })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', elem : 'e1' }
+                    ]);
 
-    it('should throw exception when both `elem` and `elems` defined (also `mod` and `mods`)', function () {
-        (function() { nomralize({ elem: '', elems: [] }); }).should.throw();
-        (function() { nomralize({ mod: '', mods: [] }); }).should.throw();
-    });
+                normalizeDeps({ block : 'b', elems : ['e1', 'e2'] })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', elem : 'e1' },
+                        { block : 'b', elem : 'e2' }
+                    ]);
+            });
+        });
 
+        describe('mods', function() {
+            it('should understand "mods" declaration', function() {
+                normalizeDeps({ block : 'b', mods : { m : 'v' } })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', mod : 'm' },
+                        { block : 'b', mod : 'm', val : 'v' }
+                    ]);
+
+                normalizeDeps({ block : 'b', mods : [{ m1 : 'v' }, { m2 : 'v' }] })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', mod : 'm1' },
+                        { block : 'b', mod : 'm1', val : 'v' },
+                        { block : 'b', mod : 'm2' },
+                        { block : 'b', mod : 'm2', val : 'v' }
+                    ]);
+
+                normalizeDeps({ block : 'b', mods : { m : ['v1', 'v2'] } })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', mod : 'm' },
+                        { block : 'b', mod : 'm', val : 'v1' },
+                        { block : 'b', mod : 'm', val : 'v2' }
+                    ]);
+
+                normalizeDeps({ block : 'b', mods : { m1 : 'v', m2 : 'v' } })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', mod : 'm1' },
+                        { block : 'b', mod : 'm1', val : 'v' },
+                        { block : 'b', mod : 'm2' },
+                        { block : 'b', mod : 'm2', val : 'v' }
+                    ]);
+            });
+
+            it.skip('should understand "mods-names" notations', function() {
+                normalizeDeps({ block : 'b', mod : { names : ['m1', 'm2'] } })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', mod : 'm1' },
+                        { block : 'b', mod : 'm2' }
+                    ]);
+            });
+        });
+
+        describe('blocks + elems', function() {
+            it('should understand both "blocks" and "elems" declaration', function() {
+                normalizeDeps({ blocks : 'b1', elems : 'e1' })
+                    .should.eql([
+                        { block : 'b1' },
+                        { block : 'b1', elem : 'e1' }
+                    ]);
+            });
+        });
+
+        describe('uniqness', function() {
+            it('should return uniq set of declaration', function() {
+                normalizeDeps({ blocks : ['b', 'b', 'b'] })
+                    .should.eql([{ block : 'b' }]);
+
+                normalizeDeps({ block : 'b', elems : ['e', 'e', 'e'] })
+                    .should.eql([
+                        { block : 'b' },
+                        { block : 'b', elem : 'e' }
+                    ]);
+            });
+        });
+    });
 });
