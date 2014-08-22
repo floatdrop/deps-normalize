@@ -136,7 +136,6 @@ function normalize(deps) {
 }
 
 function extendDecl(decl, src) {
-    extend('tech', decl, src);
     extend('block', decl, src);
     extend('elem', decl, src);
     extend('mod', decl, src);
