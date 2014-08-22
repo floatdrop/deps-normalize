@@ -1,6 +1,6 @@
 {
   "name": "deps-normalize",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Dependencies normalization for gulp-bem",
   "main": "index.js",
   "scripts": {
