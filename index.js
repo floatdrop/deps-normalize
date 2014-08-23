@@ -1,160 +1,61 @@
-var parse = require('parse-bem-identifier');
+var props = ['block', 'elem', 'mod', 'value'];
 
-var toString = Object.prototype.toString,
-    isArray = Array.isArray,
-    isObject = function(o) {
-        return toString.call(o) === '[object Object]';
-    };
+function extend(target, source) {
+    for (var i = 0; i < props.length; i++) {
+        var prop = props[i];
+        if (target[prop]) { break; }
+        if (source[prop]) { target[prop] = source[prop]; }
+    }
+    return target;
+}
 
-module.exports = function normalizeDeps(deps) {
-    if(isArray(deps)) return deps.map(normalize);
-    return normalize(deps);
-};
+function normalize(dep) {
+    var res = [];
 
-function normalize(deps) {
-    if (typeof deps === 'string') { deps = parse(deps, {short: true});}
-
-    if(!isObject(deps)) {
-        throw new Error('invalid declaration ' + deps);
+    if (Object.keys(dep).length === 0) {
+        throw new Error(dep + ' is empty deps object');
     }
 
-    var result = [],
-        cache = {};
+    if (typeof dep.elems === 'string') { dep.elems = [ dep.elems ]; }
 
-    if(deps.blocks) {
-        var blocks = deps.blocks;
-        if(!isArray(blocks)) blocks = [blocks];
-        pushBlocks(blocks);
+    if (dep.elem !== undefined && dep.elems !== undefined) {
+        throw new Error('Cannot have `elem` and `elems` in its dependencies');
     }
 
-    var block = deps.block,
-        elem = deps.elem;
+    if (dep.mod !== undefined && dep.mods !== undefined) {
+        throw new Error('Cannot have `mod` and `mods` in dependencies');
+    }
 
-    walk(deps.elems, pushElems);
-
-    // XXX: workaround for bem/bem-tool#401
-    if(isArray(deps.elem)) {
-        walk(deps.elem, function(block, elem, elems) {
-            pushElems(block, null, elems, true);
+    if (dep.elems) {
+        dep.elems.forEach(function(elem) {
+            res.push(extend({ elem: elem }, dep));
         });
     }
 
-    walk(deps.mods, pushMods);
+    if (dep.mods) {
+        Object.keys(dep.mods).forEach(function(mod) {
+            if (typeof dep.mods[mod] === 'string') {
+                dep.mods[mod] = [dep.mods[mod]];
+            }
 
-    if(!result.length) {
-        push(extendDecl({}, deps));
-    }
-
-    return result;
-
-    function walk(items, cb) {
-        if(!items) return;
-        if(!isArray(items)) items = [items];
-
-        var i = 0,
-            slen = result.length,
-            decl;
-
-        do {
-            decl = result[i] || {};
-
-            if(decl.block) block = decl.block;
-            if(decl.elem) elem = decl.elem;
-
-            cb(block, elem, items);
-        } while(++i < slen);
-    }
-
-    function push(decl) {
-        if(isArray(decl)) {
-            decl.forEach(push);
-            return;
-        }
-
-        var key = identify(decl);
-
-        if(cache[key]) return;
-        cache[key] = true;
-
-        result.push(decl);
-    }
-
-    function pushOne(block, elem) {
-        if(block) {
-            var d = {
-                block : block
-            };
-            if(elem) d.elem = elem;
-            push(d);
-        }
-    }
-
-    function pushBlocks(blocks) {
-        blocks.reduce(function(decls, block) {
-            pushOne(block);
-            push(extendDecl({ block : block }, deps));
-
-            return decls;
-        }, []);
-    }
-
-    function pushElems(block, _, elems, single) {
-        single || pushOne(block);
-
-        elems.forEach(function(elem) {
-            var d = {};
-
-            if(block) d.block = block;
-            d.elem = elem;
-
-            push(extendDecl(d, deps));
-        });
-    }
-
-    function pushMods(block, elem, mods) {
-        pushOne(block, elem);
-
-        mods.forEach(function(mod) {
-            Object.keys(mod).forEach(function(name) {
-                var d = { mod :  name };
-                if(block) {
-                    d.block = block;
-                    if(elem) d.elem = elem;
-                }
-
-                push(extendDecl({}, d));
-
-                var vals = mod[name];
-                if(!vals) {
-                    return;
-                }
-
-                if(!isArray(vals)) vals = [vals];
-
-                vals.forEach(function(val) {
-                    push(extendDecl({ val : val }, d));
-                });
+            dep.mods[mod].forEach(function(value) {
+                res.push(extend({ mod: mod, val: value }, dep));
             });
         });
     }
+
+    if (!dep.elems && !dep.mods) {
+        res.push(dep);
+    }
+
+    return res;
 }
 
-function extendDecl(decl, src) {
-    extend('block', decl, src);
-    extend('elem', decl, src);
-    extend('mod', decl, src);
-    extend('val', decl, src);
-    return decl;
-}
+module.exports = function (deps) {
+    if (!deps) { return []; }
+    if (!Array.isArray(deps)) { deps = [ deps ]; }
 
-function extend(type, decl, src) {
-    if(decl[type]) return decl;
-    if(src[type]) decl[type] = src[type];
-    return decl;
-}
-
-function identify(decl) {
-    return decl.block +
-        (decl.elem? '__' + decl.elem : '') +
-        (decl.mod? '_' + decl.mod + (decl.val? '_' + decl.val : '') : '');
-}
+    return deps.reduce(function (previous, current) {
+        return previous.concat(normalize(current));
+    }, []);
+};

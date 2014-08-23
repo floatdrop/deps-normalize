@@ -1,177 +1,76 @@
 /* global describe, it */
 
+var nomralize = require('../');
 require('should');
-var normalizeDeps = require('../');
 
-describe('deps normalizer', function() {
-    describe('simple', function() {
-        it('should return array', function() {
-            var deps = normalizeDeps({ block : 'b1' });
-            deps.should.be.instanceOf(Array);
-            deps.should.be.ok;
-        });
-
-        it('should consume array of declarations', function() {
-            var deps = normalizeDeps([{ block : 'b1' }, { block : 'b2' }]);
-            deps.should.be.instanceOf(Array);
-            deps.should.have.length(2);
-        });
+describe('constructor', function () {
+    it('should throw expection on empty object', function () {
+        (function () {
+            nomralize({});
+        }).should.throw();
     });
 
-    describe('full declaration', function() {
-        var inDeps = [
-            { block : 'b' },
-            { block : 'b', mod : 'm' },
-            { block : 'b', mod : 'm', val : 'v' },
-            { block : 'b', elem : 'e' },
-            { block : 'b', elem : 'e', mod : 'm' },
-            { block : 'b', elem : 'e', mod : 'm', val : 'v' }
-        ];
-
-        it('should pass full declaration', function() {
-            inDeps.forEach(function(idep) {
-                normalizeDeps(idep).should.be.eql([idep]);
-            });
-        });
+    it('should interpret undefined as empty array', function () {
+        nomralize(undefined).should.be.eql([]);
     });
 
-    describe('single forms', function() {
-        describe.skip('block', function() {
-            it('should accept declare "block" with array', function() {
-                normalizeDeps({ block : ['b1', 'b2'] })
-                    .should.eql([
-                        { block : 'b1' },
-                        { block : 'b2' }
-                    ]);
-
-                normalizeDeps({ block : ['b1', 'b2'], elem : 'e' })
-                    .should.eql([
-                        { block : 'b1', elem : 'e' },
-                        { block : 'b2', elem : 'e' }
-                    ]);
-            });
-        });
-
-        describe('elem', function() {
-            it('should accept declare "elem" with array (bem/bem-tools#401)', function() {
-                normalizeDeps({ block : 'b', elem : ['e1', 'e2'] })
-                    .should.eql([
-                        { block : 'b', elem : 'e1' },
-                        { block : 'b', elem : 'e2' }
-                    ]);
-            });
-        });
+    it('should wrap objects into array', function () {
+        var obj = {block: 'block'};
+        nomralize(obj).should.eql([obj]);
     });
 
-    describe('plural forms', function() {
-        describe('blocks', function() {
-            it('should understand "blocks" declaration', function() {
-                normalizeDeps({ blocks : 'b1' })
-                    .should.eql([{ block : 'b1' }]);
+    it('should throw when `elem` and `elems` defined', function () {
+        (function() { nomralize({ elem: '', elems: [] }); }).should.throw();
+    });
 
-                normalizeDeps({ blocks : ['b1'] })
-                    .should.eql([{ block : 'b1' }]);
+    it('should throw when `mod` and `mods` defined', function () {
+        (function() { nomralize({ mod: '', mods: [] }); }).should.throw();
+    });
 
-                normalizeDeps({ blocks : ['b1'], elem : 'e' })
-                    .should.eql([{ block : 'b1' }, { block : 'b1', elem : 'e' }]);
+    it('should properly handle normal object', function () {
+        var obj = { block: 'block', elem: 'elem', mod: 'mod', val: 'val' };
+        nomralize(obj).should.eql([obj]);
+    });
+});
 
-                normalizeDeps({ blocks : ['b1', 'b2'] })
-                    .should.eql([{ block : 'b1' }, { block : 'b2'}]);
+describe('elems', function () {
+    it('should support arrays', function () {
+        nomralize({ elems: ['row', 'cell'] }).should.eql([
+            { elem: 'row' },
+            { elem: 'cell' }
+        ]);
+    });
 
-                normalizeDeps({ blocks : ['b1', 'b2'], elem : 'e' })
-                    .should.eql([
-                        { block : 'b1' },
-                        { block : 'b1', elem : 'e' },
-                        { block : 'b2' },
-                        { block : 'b2', elem : 'e' }
-                    ]);
-            });
-        });
+    it('should pass context to result', function () {
+        nomralize({ block: 'b', elems: 'row' }).should.eql([
+            { block: 'b', elem: 'row' }
+        ]);
+    });
+});
 
-        describe('elems', function() {
-            it('should understand "elems" declaration', function() {
-                normalizeDeps({ block : 'b', elems : 'e1' })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', elem : 'e1' }
-                    ]);
+describe('mods', function () {
+    it('should support objects', function () {
+        nomralize({ mods: { color: 'white', position: 'top' }}).should.eql([
+            { mod: 'color', val: 'white' },
+            { mod: 'position', val: 'top' }
+        ]);
+    });
 
-                normalizeDeps({ block : 'b', elems : ['e1', 'e2'] })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', elem : 'e1' },
-                        { block : 'b', elem : 'e2' }
-                    ]);
-            });
-        });
+    it('should pass context', function () {
+        nomralize({ block: 'b', elem: 'e', mods: { color: 'white' }}).should.eql([
+            { block: 'b', elem: 'e', mod: 'color', val: 'white' }
+        ]);
+    });
 
-        describe('mods', function() {
-            it('should understand "mods" declaration', function() {
-                normalizeDeps({ block : 'b', mods : { m : 'v' } })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', mod : 'm' },
-                        { block : 'b', mod : 'm', val : 'v' }
-                    ]);
+    it('should not pass undefined props to result', function () {
+        nomralize({ elem: 'e', mods: { color: 'white' }}).should.eql([ { elem: 'e', mod: 'color', val: 'white' } ]);
+    });
 
-                normalizeDeps({ block : 'b', mods : [{ m1 : 'v' }, { m2 : 'v' }] })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', mod : 'm1' },
-                        { block : 'b', mod : 'm1', val : 'v' },
-                        { block : 'b', mod : 'm2' },
-                        { block : 'b', mod : 'm2', val : 'v' }
-                    ]);
-
-                normalizeDeps({ block : 'b', mods : { m : ['v1', 'v2'] } })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', mod : 'm' },
-                        { block : 'b', mod : 'm', val : 'v1' },
-                        { block : 'b', mod : 'm', val : 'v2' }
-                    ]);
-
-                normalizeDeps({ block : 'b', mods : { m1 : 'v', m2 : 'v' } })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', mod : 'm1' },
-                        { block : 'b', mod : 'm1', val : 'v' },
-                        { block : 'b', mod : 'm2' },
-                        { block : 'b', mod : 'm2', val : 'v' }
-                    ]);
-            });
-
-            it.skip('should understand "mods-names" notations', function() {
-                normalizeDeps({ block : 'b', mod : { names : ['m1', 'm2'] } })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', mod : 'm1' },
-                        { block : 'b', mod : 'm2' }
-                    ]);
-            });
-        });
-
-        describe('blocks + elems', function() {
-            it('should understand both "blocks" and "elems" declaration', function() {
-                normalizeDeps({ blocks : 'b1', elems : 'e1' })
-                    .should.eql([
-                        { block : 'b1' },
-                        { block : 'b1', elem : 'e1' }
-                    ]);
-            });
-        });
-
-        describe('uniqness', function() {
-            it('should return uniq set of declaration', function() {
-                normalizeDeps({ blocks : ['b', 'b', 'b'] })
-                    .should.eql([{ block : 'b' }]);
-
-                normalizeDeps({ block : 'b', elems : ['e', 'e', 'e'] })
-                    .should.eql([
-                        { block : 'b' },
-                        { block : 'b', elem : 'e' }
-                    ]);
-            });
-        });
+    it('should support arrays as object values', function () {
+        nomralize({ mods: { color: 'white', position: ['top', 'bottom'] }}).should.eql([
+            { mod: 'color', val: 'white' },
+            { mod: 'position', val: 'top' },
+            { mod: 'position', val: 'bottom' }
+        ]);
     });
 });
