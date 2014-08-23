@@ -2,7 +2,7 @@
 
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
-This module used to normalized `require` and `expect` properties in BEM object.
+This module used to normalize `require` and `expect` properties in BEM object.
 
 ## Usage
 
