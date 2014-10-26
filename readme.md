@@ -38,9 +38,9 @@ normalize({ elems: ['e1', 'e2'], mods: {m1: 1, m2: [2, 3]} });
 // [
 //     { block: 'b', elem: 'e1' },
 //     { block: 'b', elem: 'e2' },
-//     { block: 'b', mod: 'm1', val: 1 },
-//     { block: 'b', mod: 'm2', val: 2 },
-//     { block: 'b', mod: 'm2', val: 3 }
+//     { block: 'b', modName: 'm1', modVal: 1 },
+//     { block: 'b', modName: 'm2', modVal: 2 },
+//     { block: 'b', modName: 'm2', modVal: 3 }
 // ]
 ```
 

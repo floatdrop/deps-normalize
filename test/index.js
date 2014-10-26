@@ -24,11 +24,11 @@ describe('constructor', function () {
     });
 
     it('should throw when `mod` and `mods` defined', function () {
-        (function() { nomralize({ mod: '', mods: [] }); }).should.throw();
+        (function() { nomralize({ modName: '', mods: [] }); }).should.throw();
     });
 
     it('should properly handle normal object', function () {
-        var obj = { block: 'block', elem: 'elem', mod: 'mod', val: 'val' };
+        var obj = { block: 'block', elem: 'elem', modName: 'mod', modVal: 'val' };
         nomralize(obj).should.eql([obj]);
     });
 });
@@ -51,26 +51,26 @@ describe('elems', function () {
 describe('mods', function () {
     it('should support objects', function () {
         nomralize({ mods: { color: 'white', position: 'top' }}).should.eql([
-            { mod: 'color', val: 'white' },
-            { mod: 'position', val: 'top' }
+            { modName: 'color', modVal: 'white' },
+            { modName: 'position', modVal: 'top' }
         ]);
     });
 
     it('should pass context', function () {
         nomralize({ block: 'b', elem: 'e', mods: { color: 'white' }}).should.eql([
-            { block: 'b', elem: 'e', mod: 'color', val: 'white' }
+            { block: 'b', elem: 'e', modName: 'color', modVal: 'white' }
         ]);
     });
 
     it('should not pass undefined props to result', function () {
-        nomralize({ elem: 'e', mods: { color: 'white' }}).should.eql([ { elem: 'e', mod: 'color', val: 'white' } ]);
+        nomralize({ elem: 'e', mods: { color: 'white' }}).should.eql([ { elem: 'e', modName: 'color', modVal: 'white' } ]);
     });
 
     it('should support arrays as object values', function () {
         nomralize({ mods: { color: 'white', position: ['top', 'bottom'] }}).should.eql([
-            { mod: 'color', val: 'white' },
-            { mod: 'position', val: 'top' },
-            { mod: 'position', val: 'bottom' }
+            { modName: 'color', modVal: 'white' },
+            { modName: 'position', modVal: 'top' },
+            { modName: 'position', modVal: 'bottom' }
         ]);
     });
 });

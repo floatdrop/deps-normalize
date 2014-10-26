@@ -1,4 +1,4 @@
-var props = ['block', 'elem', 'mod', 'value'];
+var props = ['block', 'elem', 'modName', 'modVal'];
 
 function extend(target, source) {
     for (var i = 0; i < props.length; i++) {
@@ -22,7 +22,17 @@ function normalize(dep) {
         throw new Error('Cannot have `elem` and `elems` in its dependencies');
     }
 
-    if (dep.mod !== undefined && dep.mods !== undefined) {
+    if (dep.mod !== undefined) {
+        dep.modName = dep.mod;
+        delete dep.mod;
+    }
+
+    if (dep.val !== undefined) {
+        dep.modVal = dep.val;
+        delete dep.val;
+    }
+
+    if (dep.modName !== undefined && dep.mods !== undefined) {
         throw new Error('Cannot have `mod` and `mods` in dependencies');
     }
 
@@ -39,7 +49,7 @@ function normalize(dep) {
             }
 
             dep.mods[mod].forEach(function(value) {
-                res.push(extend({ mod: mod, val: value }, dep));
+                res.push(extend({ modName: mod, modVal: value }, dep));
             });
         });
     }
