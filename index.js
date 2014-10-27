@@ -36,6 +36,11 @@ function normalize(dep) {
         throw new Error('Cannot have `mod` and `mods` in dependencies');
     }
 
+    if (Array.isArray(dep.elem)) {
+        dep.elems = dep.elem;
+        delete dep.elem;
+    }
+    
     if (dep.elems) {
         dep.elems.forEach(function(elem) {
             res.push(extend({ elem: elem }, dep));
