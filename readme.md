@@ -1,6 +1,6 @@
 # deps-normalize
 
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
 
 This module used to normalize `require` and `expect` properties in BEM object.
 
@@ -55,11 +55,8 @@ MIT (c) 2014 Vsevolod Strukchinsky
 [npm-url]: https://npmjs.org/package/deps-normalize
 [npm-image]: http://img.shields.io/npm/v/deps-normalize.svg?style=flat
 
-[travis-url]: http://travis-ci.org/floatdrop/deps-normalize
-[travis-image]: http://img.shields.io/travis/floatdrop/deps-normalize.svg?branch=master&style=flat
+[travis-url]: http://travis-ci.org/getbem/deps-normalize
+[travis-image]: http://img.shields.io/travis/getbem/deps-normalize.svg?branch=master&style=flat
 
-[depstat-url]: https://david-dm.org/floatdrop/deps-normalize
-[depstat-image]: http://img.shields.io/david/floatdrop/deps-normalize.svg?style=flat
-
-[coveralls-url]: https://coveralls.io/r/floatdrop/deps-normalize
-[coveralls-image]: http://img.shields.io/coveralls/floatdrop/deps-normalize.svg?style=flat
+[depstat-url]: https://david-dm.org/getbem/deps-normalize
+[depstat-image]: http://img.shields.io/david/getbem/deps-normalize.svg?style=flat
