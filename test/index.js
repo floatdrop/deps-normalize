@@ -33,6 +33,18 @@ describe('constructor', function () {
     });
 });
 
+describe('blocks', function () {
+    it('should support string', function () {
+        nomralize('jquery').should.eql([{ block: 'jquery' }]);
+    });
+
+    it('should support object', function () {
+        nomralize({ block: 'jquery' }).should.eql([
+            { block: 'jquery' }
+        ]);
+    });
+});
+
 describe('elems', function () {
     it('should support arrays', function () {
         nomralize({ elems: ['row', 'cell'] }).should.eql([
