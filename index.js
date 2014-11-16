@@ -12,6 +12,8 @@ function extend(target, source) {
 function normalize(dep) {
     var res = [];
 
+    if (typeof dep === 'string') dep = { block: dep };
+
     if (Object.keys(dep).length === 0) {
         throw new Error(dep + ' is empty deps object');
     }
@@ -40,7 +42,7 @@ function normalize(dep) {
         dep.elems = dep.elem;
         delete dep.elem;
     }
-    
+
     if (dep.elems) {
         dep.elems.forEach(function(elem) {
             res.push(extend({ elem: elem }, dep));
