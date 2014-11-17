@@ -9,10 +9,17 @@ function extend(target, source) {
     return target;
 }
 
-function normalize(dep) {
+function defaultParseString(dep) {
+    return [{ block: dep }];
+}
+
+function normalize(dep, options) {
     var res = [];
 
-    if (typeof dep === 'string') dep = { block: dep };
+    options = options || {};
+    options.parseString = options.parseString || defaultParseString;
+
+    if (typeof dep === 'string' && options.parseString) { return options.parseString(dep); }
 
     if (Object.keys(dep).length === 0) {
         throw new Error(dep + ' is empty deps object');

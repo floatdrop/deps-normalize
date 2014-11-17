@@ -19,13 +19,21 @@ normalize({ elem: 'elem' });        // [ { elem: 'elem' } ]
 
 ## API
 
-### normalize(dependencies)
+### normalize(dependencies, [options])
 
 Runs normalization of dependencies. Returns array of normalized dependencies.
 
+#### dependencies
+Type: `Object` / `String`
+
+#### options
+Type: `Object`
+
+ * `parseString` - contains `Function`, that will parse `dependencies` if they passed as string.
+
 ## Normalization
 
-Dependencies should contain [deps objects](http://bem.info/tools/bem/bem-tools/depsjs/) (or `Strings`, that will be interpreted as `{block: 'string'}`). We do not support full specification. Those objects are equivalents of BEM objects, but with additional properties, that reduces boilerplate code. After they are normalized, they can be converted to BEM objects.
+Dependencies should contain [deps objects](http://bem.info/tools/bem/bem-tools/depsjs/) (or `String`). We do not support full specification. Those objects are equivalents of BEM objects, but with additional properties, that reduces boilerplate code. After they are normalized, they can be converted to BEM objects.
 
  * `elems` - contains `Array` of `String` (if it contains `String` it will be wrapped in array).
  * `mods` - contains `Object` with keys as modificators names and values as modificators values. Values can be `String` or `Array` of `String`.
