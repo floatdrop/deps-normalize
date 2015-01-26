@@ -57,15 +57,21 @@ function normalize(dep, options) {
     }
 
     if (dep.mods) {
-        Object.keys(dep.mods).forEach(function(mod) {
-            if (typeof dep.mods[mod] === 'string') {
-                dep.mods[mod] = [dep.mods[mod]];
-            }
-
-            dep.mods[mod].forEach(function(value) {
-                res.push(extend({ modName: mod, modVal: value }, dep));
+        if (Array.isArray(dep.mods)) {
+            dep.mods.forEach(function(mod) {
+                res.push(extend({ modName: mod }, dep));
             });
-        });
+        } else {
+            Object.keys(dep.mods).forEach(function(mod) {
+                if (typeof dep.mods[mod] === 'string') {
+                    dep.mods[mod] = [dep.mods[mod]];
+                }
+
+                dep.mods[mod].forEach(function(value) {
+                    res.push(extend({ modName: mod, modVal: value }, dep));
+                });
+            });
+        }
     }
 
     if (!dep.elems && !dep.mods) {
