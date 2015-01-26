@@ -94,4 +94,11 @@ describe('mods', function () {
             { modName: 'position', modVal: 'bottom' }
         ]);
     });
+
+    it('should support array of strings as list of mods names', function () {
+        nomralize({ mods: [ 'foo', 'bar' ] }).should.eql([
+            { modName: 'foo' },
+            { modName: 'bar' }
+        ]);
+    });
 });
