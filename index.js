@@ -81,11 +81,11 @@ function normalize(dep, options) {
     return res;
 }
 
-module.exports = function (deps) {
+module.exports = function (deps, options) {
     if (!deps) { return []; }
     if (!Array.isArray(deps)) { deps = [ deps ]; }
 
     return deps.reduce(function (previous, current) {
-        return previous.concat(normalize(current));
+        return previous.concat(normalize(current, options));
     }, []);
 };
