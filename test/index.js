@@ -5,12 +5,9 @@ require('should');
 
 describe('constructor', function () {
     it('should support custom string parsing', function () {
-        it('should support string', function () {
-            nomralize('jquery', {parseString: function (dep) {
-                return { block: 'custom', elem: dep };
-            }})
-            .should.eql([{ block: 'custom', elem: 'jquery' }]);
-        });
+        nomralize('jquery', {parseString: function (dep) {
+            return { block: 'custom', elem: dep };
+        }}).should.eql([{ block: 'custom', elem: 'jquery' }]);
     });
 
     it('should throw expection on empty object', function () {
