@@ -63,7 +63,7 @@ function normalize(dep, options) {
             });
         } else {
             Object.keys(dep.mods).forEach(function(mod) {
-                if (typeof dep.mods[mod] === 'string') {
+                if (typeof dep.mods[mod] === 'string' || typeof dep.mods[mod] === 'boolean') {
                     dep.mods[mod] = [dep.mods[mod]];
                 }
 

@@ -98,4 +98,10 @@ describe('mods', function () {
             { modName: 'bar' }
         ]);
     });
+
+    it('should support boolean values of mods', function() {
+        nomralize({ mods: { focused: true }}).should.eql([
+            { modName: 'focused', modVal: true }
+        ]);
+    });
 });
