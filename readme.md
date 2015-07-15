@@ -36,7 +36,7 @@ Type: `Object`
 Dependencies should contain [deps objects](http://bem.info/tools/bem/bem-tools/depsjs/) (or `String`). We do not support full specification. Those objects are equivalents of BEM objects, but with additional properties, that reduces boilerplate code. After they are normalized, they can be converted to BEM objects.
 
  * `elems` - contains `Array` of `String` (if it contains `String` it will be wrapped in array).
- * `mods` - contains `Object` with keys as modificators names and values as modificators values. Values can be `String` or `Array` of `String`.
+ * `mods` - contains `Object` with keys as modificators names and values as modificators values. Values can be `Boolean`, `String` or `Array` of `String`.
 
 If deps object contain `elems` or `mods` it will be splitted in multiple BEM objects. It will not take multiplication of `elems` and `mods`, if both are present in deps object. Instead it will be interpretated as two deps objects: one with `elems` and other with `mods`.
 
