@@ -104,4 +104,10 @@ describe('mods', function () {
             { modName: 'focused', modVal: true }
         ]);
     });
+
+    it('should support numeric values of mods', function() {
+        nomralize({ mods: { facebook: 16 }}).should.eql([
+            { modName: 'facebook', modVal: 16 }
+        ]);
+    });
 });
