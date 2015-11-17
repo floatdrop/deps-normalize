@@ -52,6 +52,8 @@ function normalize(dep, options) {
 
     if (dep.elems) {
         dep.elems.forEach(function(elem) {
+            if (elem === '') return;
+
             res.push(extend({ elem: elem }, dep));
         });
     }
@@ -59,6 +61,8 @@ function normalize(dep, options) {
     if (dep.mods) {
         if (Array.isArray(dep.mods)) {
             dep.mods.forEach(function(mod) {
+                if (mod === '') return;
+
                 res.push(extend({ modName: mod }, dep));
             });
         } else {

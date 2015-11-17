@@ -20,6 +20,14 @@ describe('constructor', function () {
         nomralize(undefined).should.be.eql([]);
     });
 
+    it("shouldn't return empty elems", function () {
+        nomralize({ elems: [''] }).should.eql([]);
+    });
+
+    it("shouldn't return empty mods", function () {
+        nomralize({ mods: [''] }).should.eql([]);
+    });
+
     it('should wrap objects into array', function () {
         var obj = {block: 'block'};
         nomralize(obj).should.eql([obj]);
